@@ -40,10 +40,15 @@ void setup()
     LXDatagramOutput datagramOutput = new LXDatagramOutput(lx); 
     lx.engine.addOutput(datagramOutput);
 
-    // Show  a single test obelisk for now
-    ObeliskDatagram datagram = new ObeliskDatagram(lx, model.obelisks[0].fix, (byte) 0x00);
-    datagram.setAddress("192.168.1.19").setPort(6969);
-    datagramOutput.addDatagram(datagram);
+    // Show Bases
+    ObeliskDatagram datagram1 = new ObeliskDatagram(lx, model.obeliskBases[0].fixture, (byte) 0x00);
+    datagram1.setAddress("192.168.1.19").setPort(6969);
+    datagramOutput.addDatagram(datagram1);
+
+    // Show Legs
+    ObeliskDatagram datagram2 = new ObeliskDatagram(lx, model.obeliskLegs[0].fixture, (byte) 0x01);
+    datagram2.setAddress("192.168.1.19").setPort(6969);
+    datagramOutput.addDatagram(datagram2);
   }
   catch (Exception x) 
   {
