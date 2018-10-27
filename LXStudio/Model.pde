@@ -1,6 +1,6 @@
-Obelisk buildModel() 
+Obelisks buildModel() 
 {
-  return new Obelisk(new LXTransform(), 0);
+  return new Obelisks();
 }
 
 public static class Obelisks extends LXModel 

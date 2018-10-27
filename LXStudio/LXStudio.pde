@@ -30,7 +30,7 @@ void setup()
   size(1920, 1020, P3D);
 
   // Start Obelisks
-  Obelisk model = buildModel();
+  Obelisks model = buildModel();
   lx = new heronarts.lx.studio.LXStudio(this, model, MULTITHREADED);
   lx.ui.setResizable(RESIZABLE);
 
@@ -41,7 +41,7 @@ void setup()
     lx.engine.addOutput(datagramOutput);
 
     // Show  a single test obelisk for now
-    ObeliskDatagram datagram = new ObeliskDatagram(lx, model.fix, (byte) 0x00);
+    ObeliskDatagram datagram = new ObeliskDatagram(lx, model.obelisks[0].fix, (byte) 0x00);
     datagram.setAddress("192.168.1.19").setPort(6969);
     datagramOutput.addDatagram(datagram);
   }
