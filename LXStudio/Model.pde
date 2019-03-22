@@ -5,7 +5,7 @@ Obelisks buildModel()
 
 public static class Obelisks extends LXModel 
 {
-  public static final int OBELISK_COUNT = 1;
+  public static final int OBELISK_COUNT = 2;
   public static final LXVector[] obeliskPositions = new LXVector[] 
   { 
     new LXVector(2, 0, 2),
