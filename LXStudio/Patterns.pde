@@ -130,7 +130,7 @@ public static class CornersPattern extends LXPattern
     float n = 0;
 
     timer += deltaMs * speed;
-    for (LXPoint p : obelisk.points) 
+    for (LXPoint p : structure.points) 
     {
 
       switch (this.axis.getEnum()) 
@@ -145,4 +145,3 @@ public static class CornersPattern extends LXPattern
     }
   }
 }
-

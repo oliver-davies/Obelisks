@@ -1,4 +1,4 @@
-public static class ObeliskDatagram extends OPCDatagram 
+public static class HexigonDatagram extends OPCDatagram 
 {
   static final float GAMMA = 1.8;
   
@@ -14,7 +14,7 @@ public static class ObeliskDatagram extends OPCDatagram
     
   private final LXParameter brightness; 
     
-  public ObeliskDatagram(LX lx, LXAbstractFixture fixture, byte channel) {
+  public HexigonDatagram(LX lx, LXAbstractFixture fixture, byte channel) {
     super(fixture, channel);
     this.brightness = lx.engine.output.brightness;
   }

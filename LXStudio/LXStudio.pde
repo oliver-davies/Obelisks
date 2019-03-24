@@ -24,15 +24,15 @@
 // Reference to top-level LX instance
 heronarts.lx.studio.LXStudio lx;
 
-static Obelisks obelisk;
+static Hexigons structure;
 void setup() 
 {
   // Processing setup, constructs the window and the LX instance
   size(1920, 1020, P3D);
 
   // Start Obelisks
-  obelisk = buildModel();
-  lx = new heronarts.lx.studio.LXStudio(this, obelisk, MULTITHREADED);
+  structure = buildModel();
+  lx = new heronarts.lx.studio.LXStudio(this, structure, MULTITHREADED);
   lx.ui.setResizable(RESIZABLE);
 
   // Initialize networking
@@ -40,19 +40,9 @@ void setup()
   {
     LXDatagramOutput datagramOutput = new LXDatagramOutput(lx); 
     lx.engine.addOutput(datagramOutput);
-
-    for(int i = 0; i < 2; i++)
-    {
-      // Show Bases
-      ObeliskDatagram datagram1 = new ObeliskDatagram(lx, obelisk.obeliskBases[i].fixture, (byte) 0x00);
-      datagram1.setAddress("192.168.1." + (19 + i)).setPort(6969);
-      datagramOutput.addDatagram(datagram1);
-
-      // Show Legs
-      ObeliskDatagram datagram2 = new ObeliskDatagram(lx, obelisk.obeliskLegs[i].fixture, (byte) 0x01);
-      datagram2.setAddress("192.168.1." + (19 + i)).setPort(6969);
-      datagramOutput.addDatagram(datagram2);
-    }
+    HexigonDatagram datagram = new HexigonDatagram(lx, structure.hexigons[0].fixture, (byte) 0x00);
+    datagram.setAddress("192.168.50." + 20).setPort(6969);
+    datagramOutput.addDatagram(datagram);
   }
   catch (Exception x) 
   {
