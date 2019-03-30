@@ -14,8 +14,8 @@ public static class HexigonDatagram extends OPCDatagram
     
   private final LXParameter brightness; 
     
-  public HexigonDatagram(LX lx, LXAbstractFixture fixture, byte channel) {
-    super(fixture, channel);
+  public HexigonDatagram(LX lx, int[] fixture) {
+    super(fixture);
     this.brightness = lx.engine.output.brightness;
   }
   

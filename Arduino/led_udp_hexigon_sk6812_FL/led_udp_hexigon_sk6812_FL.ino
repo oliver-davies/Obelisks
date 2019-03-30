@@ -1,21 +1,37 @@
+
+// Network libraries
 #include <WiFi.h>
 #include <WiFiUdp.h>
 #include <ETH.h>
 
-// NETWORK
-#define NET_ID 20
+// IP address 192.168.50.<NET_ID>
+#define NET_ID 24
 
-// LED
-#include <NeoPixelBus.h>
+// LED libraries + RGBW hack
+#include "FastLED.h"
+#include "FastLED_RGBW.h"
+
+// LED counts
 #define NUM_LEDS_TOTAL 162 * 3
 #define NUM_LEDS_PRIMARY 162
+
+// Data pins
 #define DATA_PIN_1 16
 #define DATA_PIN_2 17
+#define DATA_PIN_3 32
 
-NeoPixelBus<NeoRgbwFeature, NeoEsp32BitBangSk6812Method> strip(NUM_LEDS_PRIMARY, DATA_PIN_1);
-NeoPixelBus<NeoRgbwFeature, NeoEsp32BitBangSk6812Method> strip2(NUM_LEDS_PRIMARY, DATA_PIN_2);
+// Hexigon 1
+CRGBW strip1[NUM_LEDS_PRIMARY];
+CRGB *strip1RGB = (CRGB *) &strip1[0];
 
+// Hexigon 2
+CRGBW strip2[NUM_LEDS_PRIMARY];
+CRGB *strip2RGB = (CRGB *) &strip2[0];
 
+// Hexigon 3
+CRGBW strip3[NUM_LEDS_PRIMARY];
+CRGB *strip3RGB = (CRGB *) &strip3[0];
+ 
 // UDP
 const uint16_t BUFFERSIZE_PRIMARY = NUM_LEDS_TOTAL * 3 + 4; // The +4 is for the header
 uint8_t packetBufferPrimary[BUFFERSIZE_PRIMARY];
@@ -86,10 +102,12 @@ void setupLEDs()
   digitalWrite(5, LOW);
   
   delay(1000);
-  strip.Begin();
-  strip.Show();
-  strip2.Begin();
-  strip2.Show();
+
+  // Add hexigon outputs
+  FastLED.addLeds<WS2812B, DATA_PIN_1, RGB>(strip1RGB, getRGBWsize(NUM_LEDS_PRIMARY));
+  FastLED.addLeds<WS2812B, DATA_PIN_2, RGB>(strip2RGB, getRGBWsize(NUM_LEDS_PRIMARY));
+  FastLED.addLeds<WS2812B, DATA_PIN_3, RGB>(strip3RGB, getRGBWsize(NUM_LEDS_PRIMARY));
+  FastLED.show();
 }
 
 void setupUDP()
@@ -120,75 +138,53 @@ void NetworkData()
 {
   if(ReadInPacket(packetBufferPrimary, BUFFERSIZE_PRIMARY))
   {
-    strip.Show();
-    strip2.Show();
+    FastLED.show();
   }
-  delay(4);
 }
 
 
 bool ReadInPacket(uint8_t buf[], uint16_t bufSize)
 {
   int packetSize = Udp.parsePacket();
-  RgbwColor assignColor(0,0,0,0);
   if (packetSize) 
   {
     int len = Udp.read(buf, bufSize);
     if(len == 0) return false;
-
-    //Serial.print("Packet number ");
-    //Serial.println(buf[0]);
-
-    //if (len > 0) buf[ledCount * 3] = 0;
     
-    //Serial.println(packetSize);
     int dataCounter = 4;
+
     for (uint16_t i = 0; i < NUM_LEDS_PRIMARY; i++)
     {
-      //Serial.println(i);
-      assignColor.R = buf[dataCounter  ];
-      assignColor.G = buf[dataCounter+1];
-      assignColor.B = buf[dataCounter+2];
-      assignColor.W = 0;
-      strip.SetPixelColor(i, assignColor);
+      strip1[i] = CRGBW(buf[dataCounter],buf[dataCounter + 1], buf[dataCounter + 2], 0);
       dataCounter += 3;
     }
     
     for (uint16_t i = 0; i < NUM_LEDS_PRIMARY; i++)
     {
-      //Serial.println(i);
-      assignColor.R = buf[dataCounter  ];
-      assignColor.G = buf[dataCounter+1];
-      assignColor.B = buf[dataCounter+2];
-      assignColor.W = 0;
-      strip2.SetPixelColor(i, assignColor);
+      strip2[i] = CRGBW(buf[dataCounter],buf[dataCounter + 1], buf[dataCounter + 2], 0);
       dataCounter += 3;
-    }    
+    } 
+
+    for (uint16_t i = 0; i < NUM_LEDS_PRIMARY; i++)
+    {
+      strip3[i] = CRGBW(buf[dataCounter],buf[dataCounter + 1], buf[dataCounter + 2], 0);
+      dataCounter += 3;
+    } 
     return true;
   }
   else return false;
 }
 
-RgbwColor white(255);
-RgbwColor black(0);
 void DefaultData()
 {
   for(int i = 0; i < NUM_LEDS_PRIMARY; i = i + 1) 
   {
-    strip.SetPixelColor(i, white);
-    strip.Show();
-
-    strip2.SetPixelColor(i, white);
-    strip2.Show();
-    
-    delay(5);
-    
-    strip.SetPixelColor(i, black);
-    strip.Show();
-    
-    strip2.SetPixelColor(i, black);
-    strip2.Show();
+      strip1[i] = CRGBW(255, 0, 0, 0);
+      strip2[i] = CRGBW(0, 255, 0, 0);
+      strip3[i] = CRGBW(0, 0, 255, 0);
   }
+  
+  FastLED.show();
 }
 
 unsigned long lastPacketTime = 0;

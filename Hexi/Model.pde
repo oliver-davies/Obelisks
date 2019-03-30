@@ -5,19 +5,32 @@ Hexigons buildModel()
 
 public static class Hexigons extends LXModel 
 {
-  public static final int HEXIGON_COUNT = 3;
+  public static final int HEXIGON_COUNT = 13;
   public static final LXVector[] hexigonPositions = new LXVector[] 
   { 
+    new LXVector(0, 0, 43 * IN)
+    new LXVector(-1 * M, 0, -1 * M),
+    new LXVector(-1 * M, 0, 1 * M),
+
+    new LXVector(-2 * M, 0, 2 * M),
+    new LXVector(-2 * M, 0, -2 * M),
+    new LXVector(-2 * M, 0, -2 * M),
+
     new LXVector(0, 0, 0),
     new LXVector(1 * M, 0, -1 * M),
     new LXVector(-1 * M, 0, -1 * M),
+
     new LXVector(-1 * M, 0, 1 * M),
+    new LXVector(-2 * M, 0, 2 * M),
+    new LXVector(-2 * M, 0, -2 * M),
+    
+    new LXVector(0, 0, 0) // 13
   };
 
   public static final float[] hexigonRotations = new float[] 
   { 
     //-PI/4, -3 * PI/4, 3 * PI/4, PI/4
-    0, 0, 0, 0
+    0, 0, 0, 0, 0, 0
   };
 
   public final Hexigon[] hexigons;
@@ -68,11 +81,12 @@ public static class Hexigon extends LXModel
   public Hexigon(LXTransform center, int index)
   {
     super(new Fixture(center));
-    this.index = index;
-    this.center = center.vector();
 
     this.fixture = (Fixture) this.fixtures.get(0);
     this.vertices = fixture.vertices;
+
+    this.index = index;
+    this.center = center.vector();
   }
 
   public static class Fixture extends LXAbstractFixture
@@ -110,7 +124,7 @@ public static class Hexigon extends LXModel
       
       // Move to the edge of the hexigon
       t.translate(INNER_RADIUS, 0, 0);
-      t.rotateY(-2 * PI/3);
+      t.rotateY(2 * PI/3);
       
       for (int side = 6; side < 12; ++side) 
       {
@@ -127,7 +141,7 @@ public static class Hexigon extends LXModel
         t.translate(-LED_DELTA/2., 0);
         
         // Rotate to next hexigon side
-        t.rotateY(-PI/3);
+        t.rotateY(PI/3);
       }
 
       t.pop();

@@ -28,21 +28,54 @@ static Hexigons structure;
 void setup() 
 {
   // Processing setup, constructs the window and the LX instance
-  size(1920, 1020, P3D);
+  size(640, 480, P3D);
 
   // Start Obelisks
   structure = buildModel();
   lx = new heronarts.lx.studio.LXStudio(this, structure, MULTITHREADED);
   lx.ui.setResizable(RESIZABLE);
 
+  // Indicies for first 0=3
+  int[] indices0_3 = new int[162 * 3];
+
+  // Indicies for first 3-6
+  int[] indices3_6 = new int[162 * 3];
+
+  // Indicies for first 6-9
+  int[] indices6_9 = new int[162 * 3];
+
+  // Indicies for first 9-12
+  int[] indices9_12 = new int[162 * 3];
+
+  // Indicies for first 13
+  int[] indices13 = new int[162];
+
+  // Setup indices
+  int LedsPerHexigonGroup = 162 * 3;
+  for(int i = 0; i < LedsPerHexigonGroup; i++) 
+  {
+  	indices0_3 [i] = i;
+  	indices3_6 [i] = i + LedsPerHexigonGroup;
+  	indices6_9 [i] = i + LedsPerHexigonGroup * 2;
+  	indices9_12[i] = i + LedsPerHexigonGroup * 3;
+  	if(i < 162) indices13[i] = i + LedsPerHexigonGroup * 4;
+  }
+
   // Initialize networking
   try 
   {
     LXDatagramOutput datagramOutput = new LXDatagramOutput(lx); 
     lx.engine.addOutput(datagramOutput);
-    HexigonDatagram datagram = new HexigonDatagram(lx, structure.hexigons[0].fixture, (byte) 0x00);
-    datagram.setAddress("192.168.50." + 20).setPort(6969);
-    datagramOutput.addDatagram(datagram);
+
+  	// 0-3
+    HexigonDatagram datagram0_3 = new HexigonDatagram(lx, indices0_3);
+    datagram0_3.setAddress("192.168.50." + 20).setPort(6969);
+    datagramOutput.addDatagram(datagram0_3);
+
+    // 3-6
+    HexigonDatagram datagram3_6 = new HexigonDatagram(lx, indices3_6);
+    datagram3_6.setAddress("192.168.50." + 24).setPort(6969);
+    datagramOutput.addDatagram(datagram3_6);
   }
   catch (Exception x) 
   {
