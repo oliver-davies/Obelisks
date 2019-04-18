@@ -1,8 +1,53 @@
-// In this file you can define your own custom patterns
+@LXCategory("Debug")
+public static class IndividualPixelDebug extends LXPattern {
 
-// Here is a fairly basic example pattern that renders a plane that can be moved
-// across one of the axes.
-@LXCategory("Form")
+  public final CompoundParameter pixel_id = new CompoundParameter("Pixel ID", 0, Hexigons.HEXIGON_COUNT * 162);
+
+  
+  public IndividualPixelDebug(LX lx) {
+    super(lx);
+    addParameter("Hexigon ID", this.pixel_id);
+  }
+  
+  public void run(double deltaMs) {
+    int id = int(this.pixel_id.getValuef());
+
+    for (int i = 0; i < structure.points.length; i++)
+    {
+      colors[i] = LXColor.gray(0);
+    }
+    colors[id] = LXColor.gray(100);
+  }
+}
+
+@LXCategory("Debug")
+public static class HexigonAlignDebug extends LXPattern {
+
+  public final CompoundParameter hexigon_id = new CompoundParameter("Hexigon ID", 0, Hexigons.HEXIGON_COUNT - 1);
+
+  
+  public HexigonAlignDebug (LX lx) {
+    super(lx);
+    addParameter("Hexigon ID", this.hexigon_id);
+  }
+  
+  public void run(double deltaMs) {
+    int hexigon_id = int(this.hexigon_id.getValuef());
+
+    float n = 0;
+    for (int i = 0; i < Hexigons.HEXIGON_COUNT; i++) 
+    {
+      Hexigon hexi = structure.hexigons[i];
+      for (LXPoint p : hexi.points)
+      {
+        if(i == hexigon_id) colors[p.index] = LXColor.gray(100); 
+        else colors[p.index] = LXColor.gray(0);
+      }
+    }
+  }
+}
+
+@LXCategory("Shapes")
 public static class PlanePattern extends LXPattern {
   
   public enum Axis {
@@ -45,66 +90,68 @@ public static class PlanePattern extends LXPattern {
 
 // Here is a fairly basic example pattern that renders a plane that can be moved
 // across one of the axes.
-@LXCategory("Form")
+@LXCategory("Shapes")
 public static class DopsPattern extends LXPattern {
   
-  public enum Axis {
-    X, Y, Z
-  };
-  
-  public final EnumParameter<Axis> axis =
-    new EnumParameter<Axis>("Axis", Axis.X)
-    .setDescription("Which axis the plane is drawn across");
-  
-  public final CompoundParameter speed = new CompoundParameter("Speed", 0, 1)
+  public final CompoundParameter speed = new CompoundParameter("Speed", 0,-0.5, 0.5)
     .setDescription("Position of the center of the plane");
   
-  public final CompoundParameter wth = new CompoundParameter("Width", .4, 0, 10)
+  public final CompoundParameter wth = new CompoundParameter("Width", 0.5, 0, 1)
     .setDescription("Thickness of the plane");
+
+  public final CompoundParameter grouping = new CompoundParameter("Grouping", 1, 0, 13)
+    .setDescription("Thickness of the plane");
+
+  public final CompoundParameter radialWidth = new CompoundParameter("Radial Width", 1, 0, 10)
+    .setDescription("Thickness of the plane");
+
+
   
   public DopsPattern(LX lx) {
     super(lx);
-    addParameter("axis", this.axis);
-    addParameter("speed", this.speed);
-    addParameter("width", this.wth);
+    addParameter("Speed", this.speed);
+    addParameter("Width", this.wth);
+    addParameter("Grouping", this.grouping);
+    addParameter("Radial Width", this.radialWidth);
   }
   float delta = 0;
 
   public void run(double deltaMs) {
     float speed = this.speed.getValuef();
-    float falloff = 100 / this.wth.getValuef();
+    float falloff = this.wth.getValuef() * Hexigons.HEXIGON_COUNT * 162;
+    float grouping = floor(this.grouping.getValuef() * 162);
+    float radialScale = floor(this.radialWidth.getValuef() * 162);
+
     float n = 0;
     delta += deltaMs * speed;
-
-    for (LXPoint p : model.points) {
-      switch (this.axis.getEnum()) {
-      case X: n = p.xn; break;
-      case Y: n = p.yn; break;
-      case Z: n = p.zn; break;
-      }
-      double test = abs(delta - p.index) % (144 * 3 + 36 * 3) ;
-      colors[p.index] = LXColor.gray(Helpers.clamp(falloff - test, (double)0, (double)100) ); 
+    for (int i = 0; i < model.points.length; i++) 
+    {
+      LXPoint p = model.points[i];
+      double v = abs(delta - p.index) % grouping;
+      colors[p.index] = LXColor.gray(Helpers.clamp(falloff - v * Helpers.Smooth(p.rn) * radialScale, 0d, 100d) ); 
     }
   }
 }
 
-@LXCategory("Form")
-public static class CornersPattern extends LXPattern 
+@LXCategory("Shapes")
+public static class StripsPattern extends LXPattern 
 {
   public enum Axis {
     X, Y, Z
   };
   
   public final EnumParameter<Axis> axis = new EnumParameter<Axis>("Axis", Axis.X);
-  public final CompoundParameter speed = new CompoundParameter("Spread", 0, -0.05, 0.05);
+  public final CompoundParameter speed = new CompoundParameter("Spread", 0, -0.025, 0.025);
   public final CompoundParameter freq = new CompoundParameter("Freq", 0, 100);
+  public final CompoundParameter edge = new CompoundParameter("Hard Edge", 0, 1);
 
-  public CornersPattern(LX lx) 
+  public StripsPattern(LX lx) 
   {
     super(lx);
     addParameter("axis", this.axis);
     addParameter("Speed", this.speed);
     addParameter("Freq", this.freq);
+    addParameter("Hard Edge", this.edge);
   }
 
 
@@ -113,6 +160,7 @@ public static class CornersPattern extends LXPattern
   {
     float speed = this.speed.getValuef();
     float freq = this.freq.getValuef();
+    float edge = this.edge.getValuef();
     float n = 0;
 
     timer += deltaMs * speed;
@@ -126,19 +174,20 @@ public static class CornersPattern extends LXPattern
         case Z: n = p.zn; break;
       }
 
-      if(sin(timer + n * freq) > 0) colors[p.index] = LXColor.gray(100); 
-      else colors[p.index] = LXColor.gray(0); 
-    }
+      float s = sin(timer + n * freq);
+      float slices = Helpers.Smooth(s*s);
+      colors[p.index] = LXColor.gray(Helpers.lerp(edge, slices * 100, slices > 0.5f ? 100 : 0)); 
+    }  
   }
 }
 
-@LXCategory("Form")
+@LXCategory("Shapes")
 public static class SpiralPattern extends LXPattern 
 { 
   public final CompoundParameter spiralCount = new CompoundParameter("Count", 2, 1, 12);
   public final CompoundParameter curve = new CompoundParameter("Curve", 0, -3, 3);
   public final CompoundParameter wdth = new CompoundParameter("Width", 1, PI / 4, PI);
-  public final CompoundParameter rotationSpeed = new CompoundParameter("Rotation Speed", 0, -0.0025, 0.0025);
+  public final CompoundParameter rotationSpeed = new CompoundParameter("Rotation Speed", 0, -0.005, 0.005);
   public final CompoundParameter noise_scale = new CompoundParameter("Noise Scale", 0, 0, 1);
   
   public SpiralPattern(LX lx) {
@@ -174,12 +223,12 @@ public static class SpiralPattern extends LXPattern
   }
 }
 
-@LXCategory("Form")
+@LXCategory("Shapes")
 public static class RipplePattern extends LXPattern 
 {
-  public final CompoundParameter speed = new CompoundParameter("Speed", 0, -0.01, 0.01);
+  public final CompoundParameter speed = new CompoundParameter("Speed", 0, -0.02, 0.02);
   public final CompoundParameter strength = new CompoundParameter("Strength", 0, 0.1);
-  public final CompoundParameter noise_scale = new CompoundParameter("Noise Scale", 0, 0, 1);
+  public final CompoundParameter noise_scale = new CompoundParameter("Noise Scale", 0, 0, 0.4);
   public final CompoundParameter hexigon_id = new CompoundParameter("Hexigon Center", 0, Hexigons.HEXIGON_COUNT - 1);
 
 
@@ -226,6 +275,74 @@ public static class RipplePattern extends LXPattern
       }
 
       colors[p.index] = LXColor.gray(Helpers.Smooth(Helpers.clamp((double)sin((noise - d * d) + timer_wave), 0d, 1d)) * 100); 
+    }
+  }
+}
+
+@LXCategory("Shapes")
+public static class VoronoiPattern extends LXPattern {
+
+  public final CompoundParameter size = new CompoundParameter("Size", 0.01, 0, 0.1)
+    .setDescription("Thickness of the plane");
+
+  public final CompoundParameter speed = new CompoundParameter("speed", 0.001, -0.005, 0.005)
+    .setDescription("Speed of burble");
+
+   
+  public VoronoiPattern(LX lx) {
+    super(lx);
+    addParameter("Size", this.size);
+    addParameter("Speed", this.speed);
+  }
+  
+  float timer = 0;
+  public void run(double deltaMs) {
+    float wdth = this.size.getValuef();
+    float speed = this.speed.getValuef();
+
+    timer += deltaMs * speed;
+    for (int i = 0; i < Hexigons.HEXIGON_COUNT; i++) 
+    {
+      Hexigon hexi = structure.hexigons[i];
+      for (LXPoint p : hexi.points)
+      {
+        float ns = Helpers.voronoi(p.x * wdth, p.z * wdth, timer);
+        colors[p.index] = LXColor.gray(sin(max(0, min((-ns * 2), 1))) * 100); 
+      }
+    }
+  }
+}
+
+@LXCategory("Shapes")
+public static class RandomShapesPattern extends LXPattern {
+
+  public final CompoundParameter size = new CompoundParameter("Size", 0.01, 0, 0.05)
+    .setDescription("Thickness of the plane");
+
+  public final CompoundParameter speed = new CompoundParameter("speed", 0.001, -0.005, 0.005)
+    .setDescription("Speed of burble");
+
+   
+  public RandomShapesPattern(LX lx) {
+    super(lx);
+    addParameter("Size", this.size);
+    addParameter("Speed", this.speed);
+  }
+  
+  float timer = 0;
+  public void run(double deltaMs) {
+    float wdth = this.size.getValuef();
+    float speed = this.speed.getValuef();
+
+    timer += deltaMs * speed;
+    for (int i = 0; i < Hexigons.HEXIGON_COUNT; i++) 
+    {
+      Hexigon hexi = structure.hexigons[i];
+      for (LXPoint p : hexi.points)
+      {
+        float ns = Helpers.voronoi(p.x * wdth, p.z * wdth, timer);
+        colors[p.index] = LXColor.gray(sin(max(0, min((1/(ns * 1.3f)), 1))) * 100); 
+      }
     }
   }
 }
@@ -300,5 +417,42 @@ public static class Helpers
         if (val.compareTo(min) < 0) return min;
         else if (val.compareTo(max) > 0) return max;
         else return val;
+    }
+
+    public static float RandN(float n)
+    {
+      float e = ( n * 321.9) % 1;
+      return (e * e * 11.0) % 2 - 1;
+    }
+
+    public static float voronoi(float x, float z, float rand)
+    {
+      float px = floor(x);
+      float pz = floor(z);
+      float fx = abs(x%1f);
+      float fz = abs(z%1f);
+
+      float res_x = 8.0;
+      float res_z = 8.0;
+      for(int j=-1; j<=1; j++)
+      for(int i=-1; i<=1; i++)
+      {
+        float rx = i - fx + RandN(px + i) + sin(rand) * 3;
+        float rz = j - fz + RandN(pz + j) + cos(rand) * 2;
+
+        // chebyshev dist
+        float d = max(abs(rx), abs(rz));
+
+        if(d < res_x)
+        {
+          res_z = res_x;
+          res_x = d;
+        }
+        else if(d < res_z)
+        {
+          res_z = d;
+        }
+      }
+      return (res_x - res_z) * 0.5;
     }
 }

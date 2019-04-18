@@ -8,30 +8,66 @@ public static class Hexigons extends LXModel
   public static final int HEXIGON_COUNT = 13;
   public static final LXVector[] hexigonPositions = new LXVector[] 
   { 
-    new LXVector(0, 0, 43 * IN)
-    new LXVector(-1 * M, 0, -1 * M),
-    new LXVector(-1 * M, 0, 1 * M),
+    // 20 -> 0_3
+    new LXVector(-72 * IN, 0, 0),
+    new LXVector(-36 * IN, 12 * IN, 21 * IN),
+    new LXVector(-36 * IN, 12 * IN, -21 * IN),
 
-    new LXVector(-2 * M, 0, 2 * M),
-    new LXVector(-2 * M, 0, -2 * M),
-    new LXVector(-2 * M, 0, -2 * M),
+    // 22 -> 3_6
+    new LXVector(72 * IN, 0, 0),
+    new LXVector(36 * IN, 12 * IN, 21 * IN),
+    new LXVector(36 * IN, 12 * IN, -21 * IN),
 
-    new LXVector(0, 0, 0),
-    new LXVector(1 * M, 0, -1 * M),
-    new LXVector(-1 * M, 0, -1 * M),
+    // 23 -> 6_9
+    new LXVector(0, 12 * IN, 42 * IN),
+    new LXVector(-36 * IN, 0, 63 * IN),
+    new LXVector(36 * IN, 0, 63 * IN),
 
-    new LXVector(-1 * M, 0, 1 * M),
-    new LXVector(-2 * M, 0, 2 * M),
-    new LXVector(-2 * M, 0, -2 * M),
+    // 24 -> 9_12
+    new LXVector(0, 12 * IN, -42 * IN),
+    new LXVector(36 * IN, 0, -63 * IN), 
+    new LXVector(-36 * IN, 0, -63 * IN),
     
-    new LXVector(0, 0, 0) // 13
+    // 21 ->
+    new LXVector(0, -6 * IN, 0) // 13
   };
 
   public static final float[] hexigonRotations = new float[] 
   { 
-    //-PI/4, -3 * PI/4, 3 * PI/4, PI/4
-    0, 0, 0, 0, 0, 0
-  };
+    0, PI, PI, 0, PI, PI, 0, 0, PI, 0, PI, PI, 0
+  }; 
+
+
+  public static final LXVector[] hexigonScale = new LXVector[] 
+  { 
+    // 20 -> 0_3
+    new LXVector(1, 1, -1),
+    new LXVector(-1, 1, -1),
+    new LXVector(-1, 1, 1),
+
+    // 22 -> 3_6
+    new LXVector(1, 1, -1),
+    new LXVector(-1, 1, 1),
+    new LXVector(-1, 1, -1),
+
+    // 23 -> 6_9
+    new LXVector(1, 1, -1),
+    new LXVector(1, 1, 1),
+    new LXVector(-1, 1, 1),
+
+    // 24 -> 9_12
+    new LXVector(1, 1, 1),
+    new LXVector(-1, 1, 1),
+    new LXVector(-1, 1, 1),
+    
+    // 21 -> 13
+    new LXVector(1, 1, -1),
+  }; 
+
+  public static final boolean[] backwards = new boolean[] 
+  { 
+    true, true, false, false, false, false, false, false, false, true, false, false, false
+  }; 
 
   public final Hexigon[] hexigons;
 
@@ -53,12 +89,15 @@ public static class Hexigons extends LXModel
         LXTransform t = new LXTransform();
         LXVector pos = hexigonPositions[i];
         float rot = hexigonRotations[i];
+        LXVector scale = hexigonScale[i];
+        boolean invert = backwards[i];
 
         t.translate(pos.x, pos.y, pos.z);
         t.rotateY(rot);
+        t.scale(scale.x, scale.y, scale.z);
 
         t.push();
-        addPoints(this.hexi[i] = new Hexigon(t, i));
+        addPoints(this.hexi[i] = new Hexigon(t, i, invert));
         t.pop();
       }
     }
@@ -69,7 +108,7 @@ public static class Hexigon extends LXModel
 {
   public static final int OUTER_EDGE = 14;
   public static final int INNER_EDGE = 13;
-  public static final float LED_DELTA = M / 30;
+  public static final float LED_DELTA = M / 28;
   public static final float OUTER_RADIUS = ((OUTER_EDGE + 1) * LED_DELTA);
   public static final float INNER_RADIUS = ((INNER_EDGE + 1) * LED_DELTA);
 
@@ -78,9 +117,9 @@ public static class Hexigon extends LXModel
   public final LXVector[] vertices;
   public final Fixture fixture;
 
-  public Hexigon(LXTransform center, int index)
+  public Hexigon(LXTransform center, int index, boolean invert_inside)
   {
-    super(new Fixture(center));
+    super(new Fixture(center, invert_inside));
 
     this.fixture = (Fixture) this.fixtures.get(0);
     this.vertices = fixture.vertices;
@@ -93,7 +132,7 @@ public static class Hexigon extends LXModel
   {
     final LXVector[] vertices = new LXVector[12];
 
-    Fixture(LXTransform t)
+    Fixture(LXTransform t, boolean inverted)
     {
       t.push();
       
@@ -101,14 +140,14 @@ public static class Hexigon extends LXModel
       t.translate(OUTER_RADIUS, 0, 0);
       t.rotateY(2 * PI/3);
       
-      for (int side = 0; side < 6; ++side) 
+      for (int side = 0; side < 6; side++) 
       {
         // Store the vertex position
         this.vertices[side] = t.vector();
         
         // Iterate along the side of the hexigon
         t.translate(LED_DELTA/2., 0);
-        for (int e = 0; e < OUTER_EDGE; ++e) 
+        for (int e = 0; e < OUTER_EDGE; e++) 
         {
           addPoint(new LXPoint(t));
           t.translate(LED_DELTA, 0);
@@ -121,24 +160,26 @@ public static class Hexigon extends LXModel
       t.pop();
       
       t.push();
-      
+
       // Move to the edge of the hexigon
       t.translate(INNER_RADIUS, 0, 0);
+      if(inverted) t.scale(1, 1, -1);
       t.rotateY(2 * PI/3);
-      
-      for (int side = 6; side < 12; ++side) 
+
+      float LED_DELTA_H = LED_DELTA/2.;
+      for (int side = 6; side < 12; side++) 
       {
         // Store the vertex position
         this.vertices[side] = t.vector();
         
         // Iterate along the side of the hexigon
-        t.translate(LED_DELTA/2., 0);
-        for (int e = 0; e < INNER_EDGE; ++e) 
+        t.translate(LED_DELTA_H, 0);
+        for (int e = 0; e < INNER_EDGE; e++) 
         {
-          addPoint(new LXPoint(t));
+          addPoint(new LXPoint(t)); 
           t.translate(LED_DELTA, 0);
         }
-        t.translate(-LED_DELTA/2., 0);
+        t.translate(-LED_DELTA_H, 0);
         
         // Rotate to next hexigon side
         t.rotateY(PI/3);

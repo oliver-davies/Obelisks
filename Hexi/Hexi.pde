@@ -74,14 +74,29 @@ void setup()
 
     // 3-6
     HexigonDatagram datagram3_6 = new HexigonDatagram(lx, indices3_6);
-    datagram3_6.setAddress("192.168.50." + 24).setPort(6969);
+    datagram3_6.setAddress("192.168.50." + 22).setPort(6969);
     datagramOutput.addDatagram(datagram3_6);
+
+     // 6-9
+    HexigonDatagram datagram6_9 = new HexigonDatagram(lx, indices6_9);
+    datagram6_9.setAddress("192.168.50." + 23).setPort(6969);
+    datagramOutput.addDatagram(datagram6_9);
+
+    // 9-12
+    HexigonDatagram datagram9_12 = new HexigonDatagram(lx, indices9_12);
+    datagram9_12.setAddress("192.168.50." + 24).setPort(6969);
+    datagramOutput.addDatagram(datagram9_12);
+
+    // 13
+    HexigonDatagram datagram13 = new HexigonDatagram(lx, indices13);
+    datagram13.setAddress("192.168.50." + 21).setPort(6969);
+    datagramOutput.addDatagram(datagram13);
   }
   catch (Exception x) 
   {
     println("BAD ADDRESS: " + x.getLocalizedMessage());
     x.printStackTrace();
-    exit();
+    exit();              
   }
 }
 
