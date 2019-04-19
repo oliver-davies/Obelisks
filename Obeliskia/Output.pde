@@ -1,6 +1,6 @@
 public static class HexigonDatagram extends OPCDatagram 
 {
-  static final float GAMMA = 1.5;
+  static final float GAMMA = 2.2;
   
   static final byte[][] GAMMA_LUT = new byte[256][256];
   
