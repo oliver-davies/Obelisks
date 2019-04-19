@@ -24,7 +24,7 @@
 // Reference to top-level LX instance
 heronarts.lx.studio.LXStudio lx;
 
-static Hexigons structure;
+static Obelisks structure;
 void setup() 
 {
   // Processing setup, constructs the window and the LX instance
@@ -51,14 +51,14 @@ void setup()
   int[] indices13 = new int[162];
 
   // Setup indices
-  int LedsPerHexigonGroup = 162 * 3;
-  for(int i = 0; i < LedsPerHexigonGroup; i++) 
+  int LedsPerObeliskGroup = 162 * 3;
+  for(int i = 0; i < LedsPerObeliskGroup; i++) 
   {
   	indices0_3 [i] = i;
-  	indices3_6 [i] = i + LedsPerHexigonGroup;
-  	indices6_9 [i] = i + LedsPerHexigonGroup * 2;
-  	indices9_12[i] = i + LedsPerHexigonGroup * 3;
-  	if(i < 162) indices13[i] = i + LedsPerHexigonGroup * 4;
+  	indices3_6 [i] = i + LedsPerObeliskGroup;
+  	indices6_9 [i] = i + LedsPerObeliskGroup * 2;
+  	indices9_12[i] = i + LedsPerObeliskGroup * 3;
+  	if(i < 162) indices13[i] = i + LedsPerObeliskGroup * 4;
   }
 
   // Initialize networking
@@ -68,27 +68,27 @@ void setup()
     lx.engine.addOutput(datagramOutput);
 
   	// 0-3
-    HexigonDatagram datagram0_3 = new HexigonDatagram(lx, indices0_3);
+    ObeliskDatagram datagram0_3 = new ObeliskDatagram(lx, indices0_3);
     datagram0_3.setAddress("192.168.50." + 20).setPort(6969);
     datagramOutput.addDatagram(datagram0_3);
 
     // 3-6
-    HexigonDatagram datagram3_6 = new HexigonDatagram(lx, indices3_6);
+    ObeliskDatagram datagram3_6 = new ObeliskDatagram(lx, indices3_6);
     datagram3_6.setAddress("192.168.50." + 22).setPort(6969);
     datagramOutput.addDatagram(datagram3_6);
 
      // 6-9
-    HexigonDatagram datagram6_9 = new HexigonDatagram(lx, indices6_9);
+    ObeliskDatagram datagram6_9 = new ObeliskDatagram(lx, indices6_9);
     datagram6_9.setAddress("192.168.50." + 23).setPort(6969);
     datagramOutput.addDatagram(datagram6_9);
 
     // 9-12
-    HexigonDatagram datagram9_12 = new HexigonDatagram(lx, indices9_12);
+    ObeliskDatagram datagram9_12 = new ObeliskDatagram(lx, indices9_12);
     datagram9_12.setAddress("192.168.50." + 24).setPort(6969);
     datagramOutput.addDatagram(datagram9_12);
 
     // 13
-    HexigonDatagram datagram13 = new HexigonDatagram(lx, indices13);
+    ObeliskDatagram datagram13 = new ObeliskDatagram(lx, indices13);
     datagram13.setAddress("192.168.50." + 21).setPort(6969);
     datagramOutput.addDatagram(datagram13);
   }

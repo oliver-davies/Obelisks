@@ -1,12 +1,12 @@
 @LXCategory("Debug")
 public static class IndividualPixelDebug extends LXPattern {
 
-  public final CompoundParameter pixel_id = new CompoundParameter("Pixel ID", 0, Hexigons.HEXIGON_COUNT * 162);
+  public final CompoundParameter pixel_id = new CompoundParameter("Pixel ID", 0, Obelisks.OBELISK_COUNT * 162);
 
   
   public IndividualPixelDebug(LX lx) {
     super(lx);
-    addParameter("Hexigon ID", this.pixel_id);
+    addParameter("Obelisk ID", this.pixel_id);
   }
   
   public void run(double deltaMs) {
@@ -21,26 +21,26 @@ public static class IndividualPixelDebug extends LXPattern {
 }
 
 @LXCategory("Debug")
-public static class HexigonAlignDebug extends LXPattern {
+public static class ObeliskAlignDebug extends LXPattern {
 
-  public final CompoundParameter hexigon_id = new CompoundParameter("Hexigon ID", 0, Hexigons.HEXIGON_COUNT - 1);
+  public final CompoundParameter obelisk_id = new CompoundParameter("Obelisk ID", 0, Obelisks.OBELISK_COUNT - 1);
 
   
-  public HexigonAlignDebug (LX lx) {
+  public ObeliskAlignDebug (LX lx) {
     super(lx);
-    addParameter("Hexigon ID", this.hexigon_id);
+    addParameter("Obelisk ID", this.obelisk_id);
   }
   
   public void run(double deltaMs) {
-    int hexigon_id = int(this.hexigon_id.getValuef());
+    int obelisk_id = int(this.obelisk_id.getValuef());
 
     float n = 0;
-    for (int i = 0; i < Hexigons.HEXIGON_COUNT; i++) 
+    for (int i = 0; i < Obelisks.OBELISK_COUNT; i++) 
     {
-      Hexigon hexi = structure.hexigons[i];
-      for (LXPoint p : hexi.points)
+      Obelisk lisk = structure.obelisks[i];
+      for (LXPoint p : lisk.points)
       {
-        if(i == hexigon_id) colors[p.index] = LXColor.gray(100); 
+        if(i == obelisk_id) colors[p.index] = LXColor.gray(100); 
         else colors[p.index] = LXColor.gray(0);
       }
     }
@@ -118,7 +118,7 @@ public static class DopsPattern extends LXPattern {
 
   public void run(double deltaMs) {
     float speed = this.speed.getValuef();
-    float falloff = this.wth.getValuef() * Hexigons.HEXIGON_COUNT * 162;
+    float falloff = this.wth.getValuef() * Obelisks.OBELISK_COUNT * 162;
     float grouping = floor(this.grouping.getValuef() * 162);
     float radialScale = floor(this.radialWidth.getValuef() * 162);
 
@@ -229,7 +229,7 @@ public static class RipplePattern extends LXPattern
   public final CompoundParameter speed = new CompoundParameter("Speed", 0, -0.02, 0.02);
   public final CompoundParameter strength = new CompoundParameter("Strength", 0, 0.1);
   public final CompoundParameter noise_scale = new CompoundParameter("Noise Scale", 0, 0, 0.4);
-  public final CompoundParameter hexigon_id = new CompoundParameter("Hexigon Center", 0, Hexigons.HEXIGON_COUNT - 1);
+  public final CompoundParameter obelisk_id = new CompoundParameter("Obelisk Center", 0, Obelisks.OBELISK_COUNT - 1);
 
 
   public RipplePattern(LX lx)  
@@ -238,7 +238,7 @@ public static class RipplePattern extends LXPattern
     addParameter("Speed", this.speed);
     addParameter("Strength", this.strength);
     addParameter("Noise Scale", this.noise_scale);
-    addParameter("Hexigon Center", this.hexigon_id);
+    addParameter("Obelisk Center", this.obelisk_id);
   }
 
   float timer_wave = 0;
@@ -246,13 +246,13 @@ public static class RipplePattern extends LXPattern
   {
     float speed = this.speed.getValuef();
     float strength = this.strength.getValuef();
-    float hexigon_id = this.hexigon_id.getValuef();
+    float obelisk_id = this.obelisk_id.getValuef();
     float noise_scale = this.noise_scale.getValuef();
 
-    int floor_id = floor(hexigon_id);
-    float lerp = hexigon_id - floor_id;
-    LXVector c1 = structure.hexigons[floor_id].center.copy().mult(1 - lerp);
-    LXVector c2 = structure.hexigons[(floor_id + 1) % Hexigons.HEXIGON_COUNT].center.copy().mult(lerp);
+    int floor_id = floor(obelisk_id);
+    float lerp = obelisk_id - floor_id;
+    LXVector c1 = structure.obelisks[floor_id].center.copy().mult(1 - lerp);
+    LXVector c2 = structure.obelisks[(floor_id + 1) % Obelisks.OBELISK_COUNT].center.copy().mult(lerp);
     LXVector c = c1.add(c2);
 
     LXVector pv = new LXVector(0,0,0);
@@ -301,10 +301,10 @@ public static class VoronoiPattern extends LXPattern {
     float speed = this.speed.getValuef();
 
     timer += deltaMs * speed;
-    for (int i = 0; i < Hexigons.HEXIGON_COUNT; i++) 
+    for (int i = 0; i < Obelisks.OBELISK_COUNT; i++) 
     {
-      Hexigon hexi = structure.hexigons[i];
-      for (LXPoint p : hexi.points)
+      Obelisk lisk = structure.obelisks[i];
+      for (LXPoint p : lisk.points)
       {
         float ns = Helpers.voronoi(p.x * wdth, p.z * wdth, timer);
         colors[p.index] = LXColor.gray(sin(max(0, min((-ns * 2), 1))) * 100); 
@@ -335,10 +335,10 @@ public static class RandomShapesPattern extends LXPattern {
     float speed = this.speed.getValuef();
 
     timer += deltaMs * speed;
-    for (int i = 0; i < Hexigons.HEXIGON_COUNT; i++) 
+    for (int i = 0; i < Obelisks.OBELISK_COUNT; i++) 
     {
-      Hexigon hexi = structure.hexigons[i];
-      for (LXPoint p : hexi.points)
+      Obelisk lisk = structure.obelisks[i];
+      for (LXPoint p : lisk.points)
       {
         float ns = Helpers.voronoi(p.x * wdth, p.z * wdth, timer);
         colors[p.index] = LXColor.gray(sin(max(0, min((1/(ns * 1.3f)), 1))) * 100); 
