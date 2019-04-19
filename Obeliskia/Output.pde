@@ -14,8 +14,8 @@ public static class ObeliskDatagram extends OPCDatagram
     
   private final LXParameter brightness; 
     
-  public ObeliskDatagram(LX lx, int[] fixture) {
-    super(fixture);
+  public ObeliskDatagram(LX lx, int[] fixture, byte ch) {
+    super(fixture, ch);
     this.brightness = lx.engine.output.brightness;
   }
   

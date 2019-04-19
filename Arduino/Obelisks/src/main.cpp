@@ -66,7 +66,7 @@ void setupUDP();
 void ready();
 void NetworkData();
 void DefaultData();
-bool ReadInPackets(uint8_t b[], uint16_t bSize);
+bool ReadInPackets(uint8_t b[]);
 
 // Setup ethernet
 void NetworkEvent(WiFiEvent_t event)
@@ -157,13 +157,13 @@ void loop()
 
 void NetworkData()
 {
-  if(ReadInPackets(packetBufferPrimary, BUFFERSIZE))
+  if(ReadInPackets(packetBufferPrimary))
   {
     FastLED.show();
   }
 }
 
-bool ReadInPackets(uint8_t b[], uint16_t bSize)
+bool ReadInPackets(uint8_t b[])
 {
   int expected[3] = { 1, 1, 1 };
   do
@@ -171,27 +171,22 @@ bool ReadInPackets(uint8_t b[], uint16_t bSize)
     int packetSize = Udp.parsePacket();
     if (packetSize) 
     {
-      int len = Udp.read(b, bSize);
+      int len = Udp.read(b, packetSize);
       if(len == 0) continue;
   
-      int ch = (int)b[0];
-      uint16_t ledCount = (b[1] << 8) | b[2];
+      uint16_t channel  = (0x0000     | b[0]);
+      uint16_t ledCount = (packetSize - 4) / 3;
 
       // Check if we've already found this
-      if(expected[ch] == 0) continue;
-      expected[ch] = 0;
+      if(expected[channel] == 0) continue;
+      expected[channel] = 0;
       
       int dataCounter = 4;
       for (uint16_t i = 0; i < ledCount; i++)
       {
-        // uint8_t R = gamma8[b[dataCounter  ]];
-        // uint8_t G = gamma8[b[dataCounter+1]];
-        // uint8_t B = gamma8[b[dataCounter+2]];
-
-        leds[ch][i].r = b[dataCounter  ];
-        leds[ch][i].g = b[dataCounter+1];
-        leds[ch][i].b = b[dataCounter+2];
-        //leds[ch][i].maximizeBrightness((R+R+R+B+G+G+G+G)>>3);
+        leds[channel][i].r = b[dataCounter+2];
+        leds[channel][i].g = b[dataCounter+1];
+        leds[channel][i].b = b[dataCounter  ];
         dataCounter += 3;
       }
     }

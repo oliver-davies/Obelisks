@@ -59,6 +59,43 @@ public static class ColorTrailEffect extends LXEffect
 }
 
 @LXCategory(LXCategory.COLOR)
+public static class ColorSmoothTrailEffect extends LXEffect 
+{
+  private final CompoundParameter amount =
+    new CompoundParameter("Amount", 10, 1, 128)
+    .setDescription("Sets the amount of trail to apply");
+
+  private final CompoundParameter shiftColor =
+    new CompoundParameter("Shift Color", 10, 0, 255)
+    .setDescription("Set color to shift to");
+
+  public ColorSmoothTrailEffect(LX lx) {
+    super(lx);
+    addParameter("amount", this.amount);
+    addParameter("Shift Color", this.shiftColor);
+  }
+
+  @Override
+  protected void run(double deltaMs, double amount) 
+  {
+    float c = this.shiftColor.getValuef();
+    float a = this.amount.getValuef();
+
+    for (int i = 0; i < colors.length; i++) 
+    {
+      int col = colors[i];
+      float h = LXColor.h(col);
+      float s = LXColor.s(col);
+      float b = LXColor.b(col);
+      float l = (b / a);
+      float t = l * l;
+      int target = LXColor.hsb(c, s, b);
+      colors[i] = (l > 1) ? col : LXColor.lerp(target, col, t * t * t);
+    }
+  }
+}
+
+@LXCategory(LXCategory.COLOR)
 public static class ColorNoiseEffect extends LXEffect 
 {
   private final CompoundParameter amount =

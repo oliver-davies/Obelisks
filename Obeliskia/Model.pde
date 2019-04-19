@@ -5,7 +5,7 @@ Obelisks buildModel()
 
 public static class Obelisks extends LXModel 
 {
-  public static final int OBELISK_COUNT = 13;
+  public static final int OBELISK_COUNT = 1;
   public static final LXVector[] obeliskPositions = new LXVector[] 
   { 
     // 20 -> 0_3
@@ -106,11 +106,13 @@ public static class Obelisks extends LXModel
 
 public static class Obelisk extends LXModel
 {
-  public static final int OUTER_EDGE = 14;
-  public static final int INNER_EDGE = 13;
-  public static final float LED_DELTA = M / 28;
-  public static final float OUTER_RADIUS = ((OUTER_EDGE + 1) * LED_DELTA);
-  public static final float INNER_RADIUS = ((INNER_EDGE + 1) * LED_DELTA);
+  public static final int LONG_EDGE = 144;
+  public static final int SHORT_EDGE = 36;
+  public static final float LED_DELTA = M / 60f;
+  private static final float LONG = (LONG_EDGE * LED_DELTA);
+  private static final float SHORT = (SHORT_EDGE * LED_DELTA);
+  public static final float RADIUS = (SHORT / sqrt(3f));
+  public static final float HEIGHT = sqrt(RADIUS * RADIUS + LONG * LONG);
 
   public final int index;
   public final LXVector center;
@@ -126,65 +128,54 @@ public static class Obelisk extends LXModel
 
     this.index = index;
     this.center = center.vector();
+
+    println(RADIUS);
+    println(HEIGHT);
   }
 
   public static class Fixture extends LXAbstractFixture
   {
-    final LXVector[] vertices = new LXVector[12];
+    final LXVector[] vertices = new LXVector[3];
 
     Fixture(LXTransform t, boolean inverted)
     {
+      float radianInwardTilt = PI/2 + atan(RADIUS / HEIGHT);
       t.push();
       
       // Move to the edge of the obelisk
-      t.translate(OUTER_RADIUS, 0, 0);
-      t.rotateY(2 * PI/3);
+      t.translate(RADIUS, 0, 0);
+      t.rotateY(2*PI/3);
       
-      for (int side = 0; side < 6; side++) 
+      for (int side = 0; side < 3; side++) 
       {
         // Store the vertex position
         this.vertices[side] = t.vector();
         
         // Iterate along the side of the obelisk
         t.translate(LED_DELTA/2., 0);
-        for (int e = 0; e < OUTER_EDGE; e++) 
+        for (int e = 0; e < SHORT_EDGE; e++) 
         {
           addPoint(new LXPoint(t));
           t.translate(LED_DELTA, 0);
         }
         t.translate(-LED_DELTA/2., 0);
-        
-        // Rotate to next obelisk side
-        t.rotateY(PI/3);
-      }
-      t.pop();
-      
-      t.push();
 
-      // Move to the edge of the obelisk
-      t.translate(INNER_RADIUS, 0, 0);
-      if(inverted) t.scale(1, 1, -1);
-      t.rotateY(2 * PI/3);
-
-      float LED_DELTA_H = LED_DELTA/2.;
-      for (int side = 6; side < 12; side++) 
-      {
-        // Store the vertex position
-        this.vertices[side] = t.vector();
-        
-        // Iterate along the side of the obelisk
-        t.translate(LED_DELTA_H, 0);
-        for (int e = 0; e < INNER_EDGE; e++) 
+        t.rotateY(-PI/6);
+        t.rotateZ(radianInwardTilt);
+        t.translate(LED_DELTA/2., 0);
+        for (int e = 0; e < LONG_EDGE; e++) 
         {
-          addPoint(new LXPoint(t)); 
+          addPoint(new LXPoint(t));
           t.translate(LED_DELTA, 0);
         }
-        t.translate(-LED_DELTA_H, 0);
-        
-        // Rotate to next obelisk side
-        t.rotateY(PI/3);
-      }
+        t.translate(-LED_DELTA/2., 0);
+        t.translate(-LED_DELTA * LONG_EDGE, 0);
+        t.rotateZ(-radianInwardTilt);
+        t.rotateY(PI/6);
 
+        // Rotate to next obelisk side
+        t.rotateY(2*PI/3);
+      }
       t.pop();
     }
   }
