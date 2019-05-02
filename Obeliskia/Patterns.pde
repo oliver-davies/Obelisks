@@ -223,8 +223,59 @@ public static class SpiralPattern extends LXPattern
   }
 }
 
+
 @LXCategory("Shapes")
-public static class RipplePattern extends LXPattern 
+public static class RipplesPattern extends LXPattern 
+{
+  public final CompoundParameter lifetime = new CompoundParameter("LifeTime", 0, 0.01);
+  public final CompoundParameter hardness = new CompoundParameter("Hardness", 1, 1, 10);
+ public final CompoundParameter falloff = new CompoundParameter("Falloff", 1, 0, 10);
+
+  public RipplesPattern(LX lx)  
+  {
+    super(lx);
+    addParameter("Lifetime", this.lifetime);
+    addParameter("Strength", this.hardness);
+    addParameter("Falloff", this.falloff);
+  }
+
+  LXVector pv = new LXVector(0,0,0);
+  float timer_wave = 0;
+  public void run(double deltaMs) 
+  {
+    float lifetime = this.lifetime.getValuef();
+    float hardness = this.hardness.getValuef();
+    float falloff = this.falloff.getValuef();
+    timer_wave += deltaMs * lifetime;
+    for (Obelisk lisk : structure.obelisks) 
+    {
+      for(LXPoint p : lisk.points)
+      {
+        pv.x = p.x;
+        pv.y = p.y;
+        pv.z = p.z;
+
+        float brightness = 0;
+        float hueShift = 0;
+        for(LXVector drop : lisk.vertices)
+        {
+          float dist = drop.dist(pv) / M;
+          float val = Helpers.FreeWave(dist, timer_wave % 3, hardness);
+
+          hueShift += val;
+          brightness = max(brightness, val);
+        }
+
+        colors[p.index] = LXColor.hsb(hueShift % 360, 100, brightness < 0 ? 0 : brightness * 100); 
+      }
+    }
+  }
+}
+
+
+
+@LXCategory("Shapes")
+public static class ShockwavePattern extends LXPattern 
 {
   public final CompoundParameter speed = new CompoundParameter("Speed", 0, -0.02, 0.02);
   public final CompoundParameter strength = new CompoundParameter("Strength", 0, 0.1);
@@ -232,7 +283,7 @@ public static class RipplePattern extends LXPattern
   public final CompoundParameter obelisk_id = new CompoundParameter("Obelisk Center", 0, Obelisks.OBELISK_COUNT - 1);
 
 
-  public RipplePattern(LX lx)  
+  public ShockwavePattern(LX lx)  
   {
     super(lx);
     addParameter("Speed", this.speed);
@@ -455,4 +506,11 @@ public static class Helpers
       }
       return (res_x - res_z) * 0.5;
     }
+
+    public static float FreeWave(float x, float m, float w)
+    {
+      if(m + (1f/w) > x && x > m) return -0.5f*cos(2f*PI*w*x - 2f*PI*m*w) + 0.5f;
+      else return 0;
+    }
+
 }

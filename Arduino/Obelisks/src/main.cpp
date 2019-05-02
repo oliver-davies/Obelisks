@@ -8,8 +8,8 @@
 #include <ETH.h>
 #include "FastLED.h"
 
-// NETWORK
-#define NET_ID 20
+// NETWORKW
+#define NET_ID 31
 
 // LED constants
 #define NUM_DATA_OUT 3

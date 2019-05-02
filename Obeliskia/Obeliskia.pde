@@ -11,15 +11,36 @@
  * PURPOSE, WITH RESPECT TO THE SOFTWARE.
  */
 
-// ---------------------------------------------------------------------------
-//
-// Welcome to LX Studio! Getting started is easy...
-// 
-// (1) Quickly scan this file
-// (2) Look at "Model" to define your model
-// (3) Move on to "Patterns" to write your animations
-// 
-// ---------------------------------------------------------------------------
+class NetworkBundle
+{
+  public NetworkBundle(String ip, int port, LXDatagramOutput output, int segmentLength, int startIndex)
+  {
+    int[][] segments = new int[3][segmentLength];
+
+    for(int i = 0; i < segmentLength; i++) 
+    {
+      segments[0][i] = i + startIndex;
+      segments[1][i] = i + segmentLength     + startIndex;
+      segments[2][i] = i + segmentLength * 2 + startIndex;
+    }
+
+    try 
+    {
+      for(int i = 0; i < 3; i++)
+      {
+        ObeliskDatagram datagram = new ObeliskDatagram(lx, segments[i], (byte)i);
+        datagram.setAddress(ip).setPort(port);
+        output.addDatagram(datagram);
+      }
+    }
+    catch (Exception x) 
+    {
+      println("BAD ADDRESS: " + x.getLocalizedMessage());
+      x.printStackTrace();
+      exit();              
+    }
+  }
+}
 
 // Reference to top-level LX instance
 heronarts.lx.studio.LXStudio lx;
@@ -35,68 +56,21 @@ void setup()
   lx = new heronarts.lx.studio.LXStudio(this, structure, MULTITHREADED);
   lx.ui.setResizable(RESIZABLE);
 
-  int ledCount = 180;
-
-  // Indicies for first 0=3
-  int[] indices1 = new int[ledCount];
-  int[] indices2 = new int[ledCount];
-  int[] indices3 = new int[ledCount];
-
-  // Setup indices
-  for(int i = 0; i < ledCount; i++) 
-  {
-  	indices1[i] = i;
-    indices2[i] = i+ledCount;
-    indices3[i] = i+ledCount*2;
-  }
-
-  // Initialize networking
   try 
   {
+    
+    // Initialize networking
     LXDatagramOutput datagramOutput = new LXDatagramOutput(lx); 
     lx.engine.addOutput(datagramOutput);
 
-  	// Obelisk 1
-    ObeliskDatagram datagram1 = new ObeliskDatagram(lx, indices1, (byte)0x00);
-    datagram1.setAddress("192.168.50." + 20).setPort(6969);
-    datagramOutput.addDatagram(datagram1);
+    int ledPerData = 180;
+    int ledPerObelisk = 180 * 3;
 
-    ObeliskDatagram datagram2 = new ObeliskDatagram(lx, indices2, (byte)0x01);
-    datagram2.setAddress("192.168.50." + 20).setPort(6969);
-    datagramOutput.addDatagram(datagram2);
+    NetworkBundle obelisk1 = new NetworkBundle("192.168.50.23", 6969, datagramOutput, ledPerData, 0);
+    NetworkBundle obelisk2 = new NetworkBundle("192.168.50.25", 6969, datagramOutput, ledPerData, ledPerObelisk);
+    NetworkBundle obelisk3 = new NetworkBundle("192.168.50.27", 6969, datagramOutput, ledPerData, ledPerObelisk * 2);
 
-    ObeliskDatagram datagram3 = new ObeliskDatagram(lx, indices3, (byte)0x02);
-    datagram3.setAddress("192.168.50." + 20).setPort(6969);
-    datagramOutput.addDatagram(datagram3);
-
-    // Obelisk 2
-
-    // // 3-6
-    // ObeliskDatagram datagram3_6 = new ObeliskDatagram(lx, indices3_6);
-    // datagram3_6.setAddress("192.168.50." + 22).setPort(6969);
-    // datagramOutput.addDatagram(datagram3_6);
-
-    //  // 6-9
-    // ObeliskDatagram datagram6_9 = new ObeliskDatagram(lx, indices6_9);
-    // datagram6_9.setAddress("192.168.50." + 23).setPort(6969);
-    // datagramOutput.addDatagram(datagram6_9);
-
-    // // 9-12
-    // ObeliskDatagram datagram9_12 = new ObeliskDatagram(lx, indices9_12);
-    // datagram9_12.setAddress("192.168.50." + 24).setPort(6969);
-    // datagramOutput.addDatagram(datagram9_12);
-
-    // // 13
-    // ObeliskDatagram datagram13 = new ObeliskDatagram(lx, indices13);
-    // datagram13.setAddress("192.168.50." + 21).setPort(6969);
-    // datagramOutput.addDatagram(datagram13);
-  }
-  catch (Exception x) 
-  {
-    println("BAD ADDRESS: " + x.getLocalizedMessage());
-    x.printStackTrace();
-    exit();              
-  }
+  } catch (Exception x) { println("Something in networking went wrong!"); }
 }
 
 void initialize(final heronarts.lx.studio.LXStudio lx, heronarts.lx.studio.LXStudio.UI ui) 

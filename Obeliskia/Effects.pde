@@ -31,7 +31,7 @@ public static class ColorTrailEffect extends LXEffect
     .setDescription("Sets the amount of trail to apply");
 
   private final CompoundParameter shiftColor =
-    new CompoundParameter("Shift Color", 10, 0, 255)
+    new CompoundParameter("Shift Color", 10, 0, 360)
     .setDescription("Set color to shift to");
 
   public ColorTrailEffect(LX lx) {
@@ -61,25 +61,31 @@ public static class ColorTrailEffect extends LXEffect
 @LXCategory(LXCategory.COLOR)
 public static class ColorSmoothTrailEffect extends LXEffect 
 {
-  private final CompoundParameter amount =
-    new CompoundParameter("Amount", 10, 1, 128)
-    .setDescription("Sets the amount of trail to apply");
+  private final CompoundParameter strength =
+    new CompoundParameter("Strength", 10, 1, 100)
+    .setDescription("Sets the strength of trail to apply");
 
-  private final CompoundParameter shiftColor =
-    new CompoundParameter("Shift Color", 10, 0, 255)
+  private final CompoundParameter hueShift =
+    new CompoundParameter("Hue Shift", 10, 0, 360)
     .setDescription("Set color to shift to");
+
+  private final CompoundParameter satShift =
+    new CompoundParameter("Sat Shift", 1, 0, 1)
+    .setDescription("Saturation falloff");
 
   public ColorSmoothTrailEffect(LX lx) {
     super(lx);
-    addParameter("amount", this.amount);
-    addParameter("Shift Color", this.shiftColor);
+    addParameter("Strength", this.strength);
+    addParameter("Hue Shift", this.hueShift);
+    addParameter("Sat Shift", this.satShift);
   }
 
   @Override
-  protected void run(double deltaMs, double amount) 
+  protected void run(double deltaMs, double strength) 
   {
-    float c = this.shiftColor.getValuef();
-    float a = this.amount.getValuef();
+    float c = this.hueShift.getValuef();
+    float a = this.strength.getValuef();
+    float f = this.satShift.getValuef();
 
     for (int i = 0; i < colors.length; i++) 
     {
@@ -88,9 +94,10 @@ public static class ColorSmoothTrailEffect extends LXEffect
       float s = LXColor.s(col);
       float b = LXColor.b(col);
       float l = (b / a);
-      float t = l * l;
-      int target = LXColor.hsb(c, s, b);
-      colors[i] = (l > 1) ? col : LXColor.lerp(target, col, t * t * t);
+      float t = (l > 1) ? 1 : l * l * l * (l * (6f * l - 15f) + 10f);
+
+      int target = LXColor.hsb(c, lerp(s, s * t, f), b);
+      colors[i] = LXColor.lerp(target, col, t);
     }
   }
 }
@@ -103,7 +110,7 @@ public static class ColorNoiseEffect extends LXEffect
     .setDescription("Sets the amount of trail to apply");
 
   private final CompoundParameter shiftColor =
-    new CompoundParameter("Shift Color", 10, 0, 255)
+    new CompoundParameter("Shift Color", 10, 0, 360)
     .setDescription("Set color to shift to");
 
   public ColorNoiseEffect(LX lx) {
