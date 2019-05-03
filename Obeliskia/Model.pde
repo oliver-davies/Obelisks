@@ -5,36 +5,51 @@ Obelisks buildModel()
 
 public static class Obelisks extends LXModel 
 {
-  public static final int OBELISK_COUNT = 3;
+  public static final float radius = 11.5 * FT;
+  public static final int OBELISK_COUNT = 11;
   public static final LXVector[] obeliskPositions = new LXVector[] 
-  { 
-    // 20 -> 0_3
+  {  
+    new LXVector(0, 0, radius),
+    new LXVector(0, 0, radius),
+    new LXVector(0, 0, radius),
+    new LXVector(0, 0, radius),
+    new LXVector(0, 0, radius),
+    new LXVector(0, 0, radius),
+    new LXVector(0, 0, radius),
+    new LXVector(0, 0, radius),
+    new LXVector(0, 0, radius),
+    new LXVector(0, 0, radius),
     new LXVector(0, 0, 0),
-    new LXVector(-36 * IN, 12 * IN, 21 * IN),
-    new LXVector(-36 * IN, 12 * IN, -21 * IN),
+    new LXVector(0, 0, 0),
+    new LXVector(0, 0, 0),
 
-    // 22 -> 3_6
-    new LXVector(72 * IN, 0, 0),
-    new LXVector(36 * IN, 12 * IN, 21 * IN),
-    new LXVector(36 * IN, 12 * IN, -21 * IN),
+    // 20 -> 0_3
+    // new LXVector(radius * cos(0),             0, radius * sin(0) ),
+    // new LXVector(radius * cos(PI / 4),        0, radius * sin(PI / 4) ),
+    // new LXVector(radius * cos(PI / 2),        0, radius * sin(PI / 2) ),
 
-    // 23 -> 6_9
-    new LXVector(0, 12 * IN, 42 * IN),
-    new LXVector(-36 * IN, 0, 63 * IN),
-    new LXVector(36 * IN, 0, 63 * IN),
+    // // 22 -> 3_6
+    // new LXVector(radius * cos((3 / 4) * PI),  0, radius * sin((3 / 4) * PI) ),
+    // new LXVector(radius * cos(PI          ),  0, radius * sin(PI)),
+    // new LXVector(radius * cos((5 / 4) * PI),  0, radius * sin((5 / 4) * PI) ),
 
-    // 24 -> 9_12
-    new LXVector(0, 12 * IN, -42 * IN),
-    new LXVector(36 * IN, 0, -63 * IN), 
-    new LXVector(-36 * IN, 0, -63 * IN),
+    // // 23 -> 6_
+    // new LXVector(radius * cos((3 / 2) * PI),  0, radius * sin((3 / 2) * PI) ),
+    // new LXVector(radius * cos((7 / 4) * PI),  0, radius * sin((7 / 4) * PI) ),
+    // new LXVector(radius * cos((7 / 4) * PI),  0, radius * sin((7 / 4) * PI) ),
+
+    // // 24 -> 9_12
+    // new LXVector(0, 12 * IN, -42 * IN),
+    // new LXVector(36 * IN, 0, -63 * IN),
+    // new LXVector(-36 * IN, 0, -63 * IN),
     
-    // 21 ->
-    new LXVector(0, -6 * IN, 0) // 13
+    // // 21 ->
+    // new LXVector(0, -6 * IN, 0) // 13
   };
 
   public static final float[] obeliskRotations = new float[] 
   { 
-    0, PI, PI, 0, PI, PI, 0, 0, PI, 0, PI, PI, 0
+    0, PI/4, PI/2, (3 * PI) / 4 , PI, (5 * PI) / 4, (3 * PI) / 2, (7 * PI) / 4, 0, 0, 0, 0, 0
   }; 
 
 
@@ -42,26 +57,26 @@ public static class Obelisks extends LXModel
   { 
     // 20 -> 0_3
     new LXVector(1, 1, 1),
-    new LXVector(-1, 1, -1),
-    new LXVector(-1, 1, 1),
+    new LXVector(1, 1, 1),
+    new LXVector(1, 1, 1),
 
     // 22 -> 3_6
-    new LXVector(1, 1, -1),
-    new LXVector(-1, 1, 1),
-    new LXVector(-1, 1, -1),
+    new LXVector(1, 1, 1),
+    new LXVector(1, 1, 1),
+    new LXVector(1, 1, 1),
 
     // 23 -> 6_9
-    new LXVector(1, 1, -1),
     new LXVector(1, 1, 1),
-    new LXVector(-1, 1, 1),
+    new LXVector(1, 1, 1),
+    new LXVector(1, 1, 1),
 
     // 24 -> 9_12
     new LXVector(1, 1, 1),
-    new LXVector(-1, 1, 1),
-    new LXVector(-1, 1, 1),
+    new LXVector(1, 1, 1),
+    new LXVector(1, 1, 1),
     
     // 21 -> 13
-    new LXVector(1, 1, -1),
+    new LXVector(1, 1, 1),
   }; 
 
   public static final boolean[] backwards = new boolean[] 
@@ -92,8 +107,9 @@ public static class Obelisks extends LXModel
         LXVector scale = obeliskScale[i];
         boolean invert = backwards[i];
 
-        t.translate(pos.x, pos.y, pos.z);
         t.rotateY(rot);
+        t.translate(pos.x, pos.y, pos.z);
+        t.rotateY(PI);
         t.scale(scale.x, scale.y, scale.z);
 
         t.push();

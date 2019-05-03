@@ -96,13 +96,13 @@ public static class DopsPattern extends LXPattern {
   public final CompoundParameter speed = new CompoundParameter("Speed", 0,-0.5, 0.5)
     .setDescription("Position of the center of the plane");
   
-  public final CompoundParameter wth = new CompoundParameter("Width", 0.5, 0, 1)
+  public final CompoundParameter wth = new CompoundParameter("Width", 0.1, 0, 1)
     .setDescription("Thickness of the plane");
 
-  public final CompoundParameter grouping = new CompoundParameter("Grouping", 1, 0, 13)
+  public final CompoundParameter grouping = new CompoundParameter("Grouping", 1, 0, 12)
     .setDescription("Thickness of the plane");
 
-  public final CompoundParameter radialWidth = new CompoundParameter("Radial Width", 1, 0, 10)
+  public final CompoundParameter radialWidth = new CompoundParameter("Radial Width", 0.1, 0, 10)
     .setDescription("Thickness of the plane");
 
 
@@ -128,7 +128,7 @@ public static class DopsPattern extends LXPattern {
     {
       LXPoint p = model.points[i];
       double v = abs(delta - p.index) % grouping;
-      colors[p.index] = LXColor.gray(Helpers.clamp(falloff - v * Helpers.Smooth(p.rn) * radialScale, 0d, 100d) ); 
+      colors[p.index] = LXColor.gray(Helpers.clamp(falloff - v * 10, 0d, 100d) ); 
     }
   }
 }
