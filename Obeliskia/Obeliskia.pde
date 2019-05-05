@@ -65,15 +65,15 @@ void setup()
     int ledPerData = 180;
     int ledPerObelisk = 180 * 3;
 
-    NetworkBundle obelisk1 = new NetworkBundle("192.168.50.20", 6969, datagramOutput, ledPerData, 0                );
-    NetworkBundle obelisk2 = new NetworkBundle("192.168.50.21", 6969, datagramOutput, ledPerData, ledPerObelisk    );
-    NetworkBundle obelisk3 = new NetworkBundle("192.168.50.22", 6969, datagramOutput, ledPerData, ledPerObelisk * 2);
-    NetworkBundle obelisk4 = new NetworkBundle("192.168.50.23", 6969, datagramOutput, ledPerData, ledPerObelisk * 3);
-    NetworkBundle obelisk5 = new NetworkBundle("192.168.50.24", 6969, datagramOutput, ledPerData, ledPerObelisk * 4);
-    NetworkBundle obelisk6 = new NetworkBundle("192.168.50.25", 6969, datagramOutput, ledPerData, ledPerObelisk * 5);
-    NetworkBundle obelisk7 = new NetworkBundle("192.168.50.26", 6969, datagramOutput, ledPerData, ledPerObelisk * 6);
-    NetworkBundle obelisk8 = new NetworkBundle("192.168.50.27", 6969, datagramOutput, ledPerData, ledPerObelisk * 7);
-    NetworkBundle obelisk9 = new NetworkBundle("192.168.50.28", 6969, datagramOutput, ledPerData, ledPerObelisk * 8);
+    NetworkBundle obelisk1 =  new NetworkBundle("192.168.50.20", 6969, datagramOutput, ledPerData, 0                );
+    NetworkBundle obelisk2 =  new NetworkBundle("192.168.50.21", 6969, datagramOutput, ledPerData, ledPerObelisk    );
+    NetworkBundle obelisk3 =  new NetworkBundle("192.168.50.22", 6969, datagramOutput, ledPerData, ledPerObelisk * 2);
+    NetworkBundle obelisk4 =  new NetworkBundle("192.168.50.23", 6969, datagramOutput, ledPerData, ledPerObelisk * 3);
+    NetworkBundle obelisk5 =  new NetworkBundle("192.168.50.24", 6969, datagramOutput, ledPerData, ledPerObelisk * 4);
+    NetworkBundle obelisk6 =  new NetworkBundle("192.168.50.25", 6969, datagramOutput, ledPerData, ledPerObelisk * 5);
+    NetworkBundle obelisk7 =  new NetworkBundle("192.168.50.26", 6969, datagramOutput, ledPerData, ledPerObelisk * 6);
+    NetworkBundle obelisk8 =  new NetworkBundle("192.168.50.27", 6969, datagramOutput, ledPerData, ledPerObelisk * 7);
+    NetworkBundle obelisk9 =  new NetworkBundle("192.168.50.28", 6969, datagramOutput, ledPerData, ledPerObelisk * 8);
     NetworkBundle obelisk10 = new NetworkBundle("192.168.50.29", 6969, datagramOutput, ledPerData, ledPerObelisk * 9);
     NetworkBundle obelisk11 = new NetworkBundle("192.168.50.30", 6969, datagramOutput, ledPerData, ledPerObelisk * 10);
 
