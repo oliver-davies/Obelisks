@@ -9,7 +9,7 @@
 #include "FastLED.h"
 
 // NETWORKW
-#define NET_ID 31
+#define NET_ID 28
 
 // LED constants
 #define NUM_DATA_OUT 3
@@ -120,9 +120,9 @@ void NetworkEvent(WiFiEvent_t event)
 void setupLEDs()
 {
   delay(1000);
-  FastLED.addLeds<APA102, DATA_PIN, CLOCK_PIN_0, RGB>(leds[0], NUM_LEDS_PER_DATA_OUT);
-  FastLED.addLeds<APA102, DATA_PIN, CLOCK_PIN_1, RGB>(leds[1], NUM_LEDS_PER_DATA_OUT);
-  FastLED.addLeds<APA102, DATA_PIN, CLOCK_PIN_2, RGB>(leds[2], NUM_LEDS_PER_DATA_OUT);
+  FastLED.addLeds<APA102, DATA_PIN, CLOCK_PIN_0, RGB, DATA_RATE_MHZ(2)>(leds[0], NUM_LEDS_PER_DATA_OUT);
+  FastLED.addLeds<APA102, DATA_PIN, CLOCK_PIN_1, RGB, DATA_RATE_MHZ(2)>(leds[1], NUM_LEDS_PER_DATA_OUT);
+  FastLED.addLeds<APA102, DATA_PIN, CLOCK_PIN_2, RGB, DATA_RATE_MHZ(2)>(leds[2], NUM_LEDS_PER_DATA_OUT);
 }
 
 void setupUDP()
