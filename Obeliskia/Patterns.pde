@@ -21,6 +21,34 @@ public static class IndividualPixelDebug extends LXPattern {
 }
 
 @LXCategory("Debug")
+public static class DataAlignmentDebug extends LXPattern {
+
+  public final CompoundParameter obelisk_id = new CompoundParameter("Obelisk ID", 0, Obelisks.OBELISK_COUNT - 1);
+
+  
+  public DataAlignmentDebug (LX lx) {
+    super(lx);
+    addParameter("Obelisk ID", this.obelisk_id);
+  }
+  
+  public void run(double deltaMs) {
+    int obelisk_id = int(this.obelisk_id.getValuef());
+
+    float n = 0;
+    for (int i = 0; i < Obelisks.OBELISK_COUNT; i++) 
+    {
+      Obelisk lisk = structure.obelisks[i];
+      for(int j = 0; j < lisk.points.length; j++)
+      {
+        float ratio = (float)j/lisk.points.length;
+        if(i == obelisk_id) colors[lisk.points[j].index] = LXColor.hsb(ratio * 360, 100, 100); 
+        else colors[lisk.points[j].index] = LXColor.gray(0);
+      }
+    }
+  }
+}
+
+@LXCategory("Debug")
 public static class ObeliskAlignDebug extends LXPattern {
 
   public final CompoundParameter obelisk_id = new CompoundParameter("Obelisk ID", 0, Obelisks.OBELISK_COUNT - 1);
@@ -206,16 +234,17 @@ public static class SpiralPattern extends LXPattern
     float curve = this.curve.getValuef();
     float wdth = this.wdth.getValuef();
     float noise_scale = this.noise_scale.getValuef();
+    float val = (PI * 2 * spiralCount);
     timer += deltaMs * rotSpeed;
 
-    for (LXPoint p : model.points) {
+    for (LXPoint p : model.points) 
+    {
       float noise = 1;
       if(noise_scale > 0)
       {
         noise = (float)(Helpers.noise(p.x * noise_scale, p.y * noise_scale, p.z * noise_scale) + 1f) * 0.5f;
       }
-
-      float val = (PI * 2 * spiralCount);
+      
       float offset = (p.azimuth + timer - noise + p.rn * curve) % val;
       float arm = Helpers.Smooth(1 - max(0, (sin((offset * wdth / val) * PI))));
       colors[p.index] = LXColor.gray((double)arm * arm * 100); 
