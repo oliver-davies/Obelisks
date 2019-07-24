@@ -21,6 +21,39 @@
 // 
 // ---------------------------------------------------------------------------
 
+
+class NetworkBundle
+{
+  public NetworkBundle(String ip, int port, LXDatagramOutput output, int segmentCount, int segmentLength, int startIndex)
+  {
+    int[][] segments = new int[segmentCount][segmentLength];
+
+    for(int i = 0; i < segmentLength; i++) 
+    {
+      for(int j = 0; j < segmentCount; j++)
+      {
+        segments[j][i] = i + segmentLength * j + startIndex;
+      }
+    }
+
+    try 
+    {
+      for(int i = 0; i < segmentCount; i++)
+      {
+        HexigonDatagram datagram = new HexigonDatagram(lx, segments[i], (byte)i);
+        datagram.setAddress(ip).setPort(port);
+        output.addDatagram(datagram);
+      }
+    }
+    catch (Exception x) 
+    {
+      println("BAD ADDRESS: " + x.getLocalizedMessage());
+      x.printStackTrace();
+      exit();              
+    }
+  }
+}
+
 // Reference to top-level LX instance
 heronarts.lx.studio.LXStudio lx;
 
@@ -35,62 +68,18 @@ void setup()
   lx = new heronarts.lx.studio.LXStudio(this, structure, MULTITHREADED);
   lx.ui.setResizable(RESIZABLE);
 
-  // Indicies for first 0=3
-  int[] indices0_3 = new int[162 * 3];
-
-  // Indicies for first 3-6
-  int[] indices3_6 = new int[162 * 3];
-
-  // Indicies for first 6-9
-  int[] indices6_9 = new int[162 * 3];
-
-  // Indicies for first 9-12
-  int[] indices9_12 = new int[162 * 3];
-
-  // Indicies for first 13
-  int[] indices13 = new int[162];
-
-  // Setup indices
-  int LedsPerHexigonGroup = 162 * 3;
-  for(int i = 0; i < LedsPerHexigonGroup; i++) 
-  {
-  	indices0_3 [i] = i;
-  	indices3_6 [i] = i + LedsPerHexigonGroup;
-  	indices6_9 [i] = i + LedsPerHexigonGroup * 2;
-  	indices9_12[i] = i + LedsPerHexigonGroup * 3;
-  	if(i < 162) indices13[i] = i + LedsPerHexigonGroup * 4;
-  }
-
   // Initialize networking
   try 
   {
+
     LXDatagramOutput datagramOutput = new LXDatagramOutput(lx); 
     lx.engine.addOutput(datagramOutput);
 
-  	// 0-3
-    HexigonDatagram datagram0_3 = new HexigonDatagram(lx, indices0_3);
-    datagram0_3.setAddress("192.168.50." + 20).setPort(6969);
-    datagramOutput.addDatagram(datagram0_3);
+    NetworkBundle hexi1 =  new NetworkBundle("192.168.50.100", 6969, datagramOutput, 4, 162, 0);
+    NetworkBundle hexi2 =  new NetworkBundle("192.168.50.101", 6969, datagramOutput, 3, 162, 162 * 4);
+    NetworkBundle hexi3 =  new NetworkBundle("192.168.50.102", 6969, datagramOutput, 3, 162, 162 * 7);
+    NetworkBundle hexi4 =  new NetworkBundle("192.168.50.103", 6969, datagramOutput, 3, 162, 162 * 10);
 
-    // 3-6
-    HexigonDatagram datagram3_6 = new HexigonDatagram(lx, indices3_6);
-    datagram3_6.setAddress("192.168.50." + 22).setPort(6969);
-    datagramOutput.addDatagram(datagram3_6);
-
-     // 6-9
-    HexigonDatagram datagram6_9 = new HexigonDatagram(lx, indices6_9);
-    datagram6_9.setAddress("192.168.50." + 23).setPort(6969);
-    datagramOutput.addDatagram(datagram6_9);
-
-    // 9-12
-    HexigonDatagram datagram9_12 = new HexigonDatagram(lx, indices9_12);
-    datagram9_12.setAddress("192.168.50." + 24).setPort(6969);
-    datagramOutput.addDatagram(datagram9_12);
-
-    // 13
-    HexigonDatagram datagram13 = new HexigonDatagram(lx, indices13);
-    datagram13.setAddress("192.168.50." + 21).setPort(6969);
-    datagramOutput.addDatagram(datagram13);
   }
   catch (Exception x) 
   {

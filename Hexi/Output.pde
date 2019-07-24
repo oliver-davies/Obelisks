@@ -14,10 +14,11 @@ public static class HexigonDatagram extends OPCDatagram
     
   private final LXParameter brightness; 
     
-  public HexigonDatagram(LX lx, int[] fixture) {
-    super(fixture);
+  public HexigonDatagram(LX lx, int[] fixture, byte ch) {
+    super(fixture, ch);
     this.brightness = lx.engine.output.brightness;
   }
+  
   
   @Override
   protected LXDatagram copyPoints(int[] colors, int[] pointIndices, int offset) {
@@ -25,9 +26,9 @@ public static class HexigonDatagram extends OPCDatagram
     int i = offset;
     for (int index : pointIndices) {
       int c = (index >= 0) ? colors[index] : #000000;
-      this.buffer[i + 0] = gamma[0xff & (c >> 16)]; // R
+      this.buffer[i + 2] = gamma[0xff & (c >> 16)]; // R
       this.buffer[i + 1] = gamma[0xff & (c >> 8)]; // G
-      this.buffer[i + 2] = gamma[0xff & c]; // B
+      this.buffer[i + 0] = gamma[0xff & c]; // B
       i += 3;
     }
     return this;

@@ -1,6 +1,6 @@
 {
   "version": "0.1",
-  "timestamp": 1554025167038,
+  "timestamp": 1561610352518,
   "engine": {
     "id": 1,
     "class": "heronarts.lx.LXEngine",
@@ -15,7 +15,7 @@
       "crossfader": 0.5,
       "crossfaderBlendMode": 0,
       "speed": 1.0,
-      "focusedChannel": 1,
+      "focusedChannel": 2,
       "cueA": false,
       "cueB": false,
       "multithreaded": true,
@@ -48,7 +48,7 @@
           "selected": false,
           "enabled": true,
           "cue": false,
-          "fader": 0.25196850393700787,
+          "fader": 1.0,
           "crossfadeGroup": 0,
           "blendMode": 0
         },
@@ -110,7 +110,7 @@
         "parameters": {
           "label": "DCRS",
           "arm": false,
-          "selected": true,
+          "selected": false,
           "enabled": true,
           "cue": false,
           "fader": 1.0,
@@ -137,7 +137,7 @@
               "label": "Ripple",
               "Speed": -0.004999999627470976,
               "Strength": 0.0,
-              "Noise Scale": 0.5199999883770943,
+              "Noise Scale": 0.4000000059604645,
               "Hexigon Center": 12.0
             },
             "modulation": {
@@ -217,23 +217,6 @@
             "autoCycleEnabled": true
           },
           {
-            "id": 2279,
-            "class": "Hexi$CornersPattern",
-            "modulationColor": -11008,
-            "parameters": {
-              "label": "Corners",
-              "axis": 2,
-              "Speed": -1.1175871061919196E-9,
-              "Freq": 60.99999863654375
-            },
-            "modulation": {
-              "modulators": [],
-              "modulations": [],
-              "triggers": []
-            },
-            "autoCycleEnabled": true
-          },
-          {
             "id": 2284,
             "class": "Hexi$PlanePattern",
             "modulationColor": -65304,
@@ -260,7 +243,7 @@
         "parameters": {
           "label": "Colors",
           "arm": false,
-          "selected": false,
+          "selected": true,
           "enabled": true,
           "cue": false,
           "fader": 1.0,
@@ -302,7 +285,7 @@
               "label": "Solid",
               "color/brightness": 100.0,
               "color/saturation": 100.0,
-              "color/hue": 93.28346456692913
+              "color/hue": 242.5675727725029
             },
             "modulation": {
               "modulators": [],
@@ -510,7 +493,7 @@
             "minFreq": 0.0,
             "maxFreq": 19823.787109375,
             "gate": false,
-            "average": 0.12626273268322485,
+            "average": 0.0,
             "tap": false
           }
         }
@@ -552,24 +535,6 @@
             "enabled": true,
             "Polarity": 1,
             "Range": 0.12500000279396772
-          }
-        },
-        {
-          "source": {
-            "id": 2172
-          },
-          "target": {
-            "componentId": 1939,
-            "parameterPath": "color/saturation"
-          },
-          "id": 2173,
-          "class": "heronarts.lx.parameter.LXCompoundModulation",
-          "modulationColor": -65313,
-          "parameters": {
-            "label": "",
-            "enabled": true,
-            "Polarity": 1,
-            "Range": 1.0
           }
         },
         {
@@ -682,25 +647,6 @@
             "enabled": true,
             "Polarity": 1,
             "Range": -0.07500000204890966
-          }
-        },
-        {
-          "source": {
-            "componentId": 19,
-            "parameterPath": "Band-2"
-          },
-          "target": {
-            "componentId": 2279,
-            "parameterPath": "Speed"
-          },
-          "id": 2281,
-          "class": "heronarts.lx.parameter.LXCompoundModulation",
-          "modulationColor": -4652801,
-          "parameters": {
-            "label": "",
-            "enabled": true,
-            "Polarity": 1,
-            "Range": -0.6125000100582838
           }
         },
         {
@@ -875,13 +821,6 @@
           "componentId": 1939,
           "parameterPath": "color/hue",
           "cc": 8
-        },
-        {
-          "channel": 0,
-          "type": "CONTROL_CHANGE",
-          "componentId": 2173,
-          "parameterPath": "Range",
-          "cc": 12
         },
         {
           "channel": 0,
