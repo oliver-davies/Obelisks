@@ -1,6 +1,6 @@
 {
   "version": "0.1",
-  "timestamp": 1553993582890,
+  "timestamp": 1563954405033,
   "engine": {
     "id": 1,
     "class": "heronarts.lx.LXEngine",
@@ -15,7 +15,7 @@
       "crossfader": 0.5,
       "crossfaderBlendMode": 0,
       "speed": 1.0,
-      "focusedChannel": 1,
+      "focusedChannel": 2,
       "cueA": false,
       "cueB": false,
       "multithreaded": true,
@@ -105,8 +105,8 @@
         "parameters": {
           "label": "Channel-3",
           "arm": false,
-          "selected": true,
-          "enabled": true,
+          "selected": false,
+          "enabled": false,
           "cue": false,
           "fader": 1.0,
           "crossfadeGroup": 0,
@@ -165,8 +165,8 @@
         "parameters": {
           "label": "Channel-2",
           "arm": false,
-          "selected": false,
-          "enabled": false,
+          "selected": true,
+          "enabled": true,
           "cue": false,
           "fader": 0.528571417555213,
           "crossfadeGroup": 0,
@@ -200,15 +200,12 @@
             "autoCycleEnabled": false
           },
           {
-            "id": 2684,
-            "class": "Hexi$HexigonAlignPattern",
-            "modulationColor": -65517,
+            "id": 2868,
+            "class": "Hexi$HexigonAlignDebug",
+            "modulationColor": -8913152,
             "parameters": {
-              "label": "HexigonAlign",
-              "axis": 0,
-              "pos": 0.0,
-              "width": 1.0,
-              "Hexigon ID": 1.0
+              "label": "HexigonAlignDebug",
+              "Hexigon ID": 0.0
             },
             "modulation": {
               "modulators": [],
@@ -333,7 +330,7 @@
           "modulationColor": -65306,
           "parameters": {
             "label": "LFO 1",
-            "running": true,
+            "running": false,
             "trigger": false,
             "loop": true,
             "tempoSync": false,
@@ -348,7 +345,7 @@
             "phase": 0.0,
             "exp": 0.0
           },
-          "basis": 0.6284466220225982
+          "basis": 0.0
         }
       ],
       "modulations": [

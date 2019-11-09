@@ -9,64 +9,64 @@ public static class Hexigons extends LXModel
   public static final LXVector[] hexigonPositions = new LXVector[] 
   { 
     // 20 -> 0_3
-    new LXVector(-72 * IN, 0, 0),
-    new LXVector(-36 * IN, 12 * IN, 21 * IN),
-    new LXVector(-36 * IN, 12 * IN, -21 * IN),
-
-    // 22 -> 3_6
-    new LXVector(72 * IN, 0, 0),
-    new LXVector(36 * IN, 12 * IN, 21 * IN),
-    new LXVector(36 * IN, 12 * IN, -21 * IN),
-
-    // 23 -> 6_9
+    new LXVector(36 * IN, 0, 63 * IN),
     new LXVector(0, 12 * IN, 42 * IN),
     new LXVector(-36 * IN, 0, 63 * IN),
-    new LXVector(36 * IN, 0, 63 * IN),
+
+    // 22 -> 3_6
+    new LXVector(0, -6 * IN, 0),
+    new LXVector(72 * IN, 0, 0),
+    new LXVector(36 * IN, 12 * IN, 21 * IN),
+
+    // 23 -> 6_9
+    new LXVector(36 * IN, 12 * IN, -21 * IN),
+    new LXVector(-36 * IN, 12 * IN, -21 * IN),
+    new LXVector(-72 * IN, 0, 0),
 
     // 24 -> 9_12
-    new LXVector(0, 12 * IN, -42 * IN),
-    new LXVector(36 * IN, 0, -63 * IN), 
+    new LXVector(-36 * IN, 12 * IN, 21 * IN),
+    new LXVector(0, 12 * IN, -42 * IN), 
     new LXVector(-36 * IN, 0, -63 * IN),
     
     // 21 ->
-    new LXVector(0, -6 * IN, 0) // 13
+    new LXVector(36 * IN, 0, -63 * IN) // 13
   };
 
   public static final float[] hexigonRotations = new float[] 
   { 
-    0, PI, PI, 0, PI, PI, 0, 0, PI, 0, PI, PI, 0
+    PI, PI, PI, PI, PI, PI, 0, 0, 0, PI, PI, PI, 0
   }; 
 
 
   public static final LXVector[] hexigonScale = new LXVector[] 
   { 
     // 20 -> 0_3
-    new LXVector(1, 1, -1),
-    new LXVector(-1, 1, -1),
-    new LXVector(-1, 1, 1),
+    new LXVector(1, 1, 1),
+    new LXVector(1, 1, 1),
+    new LXVector(1, 1, 1),
 
     // 22 -> 3_6
     new LXVector(1, 1, -1),
-    new LXVector(-1, 1, 1),
-    new LXVector(-1, 1, -1),
+    new LXVector(1, 1, 1),
+    new LXVector(1, 1, 1),
 
     // 23 -> 6_9
-    new LXVector(1, 1, -1),
-    new LXVector(1, 1, 1),
+    new LXVector(-1, 1, -1),
+    new LXVector(-1, 1, 1),
     new LXVector(-1, 1, 1),
 
     // 24 -> 9_12
     new LXVector(1, 1, 1),
-    new LXVector(-1, 1, 1),
-    new LXVector(-1, 1, 1),
+    new LXVector(1, 1, -1),
+    new LXVector(1, 1, 1),
     
     // 21 -> 13
-    new LXVector(1, 1, -1),
+    new LXVector(-1, 1, -1),
   }; 
 
   public static final boolean[] backwards = new boolean[] 
   { 
-    true, true, false, false, false, false, false, false, false, true, false, false, false
+    false, true, false, false, false, false, false, true, true, false, false, false, false
   }; 
 
   public final Hexigon[] hexigons;

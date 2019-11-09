@@ -330,7 +330,8 @@ public static class RandomShapesPattern extends LXPattern {
   }
   
   float timer = 0;
-  public void run(double deltaMs) {
+  public void run(double deltaMs) 
+  {
     float wdth = this.size.getValuef();
     float speed = this.speed.getValuef();
 
@@ -342,6 +343,93 @@ public static class RandomShapesPattern extends LXPattern {
       {
         float ns = Helpers.voronoi(p.x * wdth, p.z * wdth, timer);
         colors[p.index] = LXColor.gray(sin(max(0, min((1/(ns * 1.3f)), 1))) * 100); 
+      }
+    }
+  }
+}
+
+@LXCategory("Shapes")
+public static class FallingStars extends LXPattern 
+{
+  public final CompoundParameter size = new CompoundParameter("Size", 1, 0, 10)
+    .setDescription("Size of stars");
+
+  public final CompoundParameter spread = new CompoundParameter("Spread", 0., 0., 100.)
+    .setDescription("Spread of stars");
+
+  public final CompoundParameter speed = new CompoundParameter("Speed", 0.2, -0.5, 0.5)
+    .setDescription("Speed of stars");
+    
+  public final CompoundParameter count = new CompoundParameter("Count", 6, 1, 16)
+    .setDescription("Count of stars");
+
+  public final CompoundParameter direction = new CompoundParameter("Direction", 0, 0, 360)
+    .setDescription("Direction of starfall");
+
+  public final CompoundParameter worldLimit = new CompoundParameter("World Limit", 0, 0, 100)
+    .setDescription("world limit");
+
+
+  LXVector[] starLocations; 
+
+  public FallingStars(LX lx) 
+  {
+    super(lx);
+    addParameter("Size", this.size);
+    addParameter("Speed", this.speed);
+    addParameter("Count", this.count);
+    addParameter("Direction", this.direction);
+    addParameter("Spread", this.spread);
+    addParameter("World Limit", this.worldLimit);
+
+    starLocations = new LXVector[16];
+    for(int i = 0; i < starLocations.length; i++)
+    {
+      starLocations[i] = new LXVector(Helpers.RandN(i), 0, Helpers.RandN((i + 1)*2));
+    }
+  }
+  
+  float timer = 0;
+  public void run(double deltaMs)
+  {
+    float sz = this.size.getValuef();
+    float sp = this.speed.getValuef();
+    float cnt = this.count.getValuef();
+    float dir = radians(this.direction.getValuef());
+    float spread = this.spread.getValuef();
+    float wpos = this.spread.getValuef(); 
+
+    LXVector fallDirection = new LXVector(cos(dir), 0, sin(dir));
+    LXVector fallStep = fallDirection.copy();
+    LXVector zero = new LXVector(0,0,0);
+    fallStep.mult((float)deltaMs * sp);
+    for(int i = 0; i < cnt; i++)
+    {
+      if(zero.dist(starLocations[i]) > wpos)
+      {
+        //starLocations[i] = (new LXVector(Helpers.RandN(i), 0, Helpers.RandN((i + 1)*2))).add(fallDirection.copy().mult(-wpos));
+        starLocations[i] = zero;
+      }
+      starLocations[i].add(fallStep);
+    }
+
+    for (LXPoint p : structure.points) 
+    {
+      colors[p.index] = LXColor.gray(0);
+    }
+
+    for (int i = 0; i < Hexigons.HEXIGON_COUNT; i++) 
+    {
+      Hexigon hexi = structure.hexigons[i];
+      for (LXPoint p : hexi.points)
+      {
+        LXVector pointPos = new LXVector(p);
+        for(int j = 0; j < cnt; j++)
+        {
+          float b = LXColor.b(colors[p.index]);
+          if(starLocations[j].copy().mult(spread).dist(pointPos) < sz*10) b = constrain(b + 30, 0f, 100f); 
+          colors[p.index] = LXColor.gray(b);
+        }
       }
     }
   }
